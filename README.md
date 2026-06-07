@@ -43,7 +43,7 @@ SI Kemasan UMKM dikembangkan menggunakan pendekatan **Rational Unified Process (
 
 | Komponen           | Teknologi                           |
 | ------------------ | ----------------------------------- |
-| Backend            | PHP 8.1+, Laravel 10                |
+| Backend            | PHP 8.3, Laravel 13                 |
 | Frontend           | Bootstrap 5.3, jQuery, Chart.js     |
 | Database           | MySQL / MariaDB                     |
 | PDF                | barryvdh/laravel-dompdf             |
@@ -291,7 +291,7 @@ Default user seeder:
 ## Use Case Diagram
 
 ```mermaid
-graph TB
+graph TD
     subgraph "Sistem Informasi Kemasan UMKM"
         UC1(Login)
         UC2(Lihat Dashboard)
