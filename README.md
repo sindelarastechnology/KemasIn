@@ -256,6 +256,15 @@ Login manual via `LoginController` — tanpa Laravel Breeze/Jetstream. Session-b
 
 ## Cara Instalasi
 
+> **Peringatan:** Pastikan environment Anda sudah menggunakan versi terbaru sebelum menjalankan proyek ini:
+> - PHP `>= 8.3` (direkomendasikan PHP 8.3.x terbaru)
+> - Composer `>= 2.7`
+> - Node.js `>= 20` & NPM `>= 10`
+> - Database MySQL `>= 8.0` atau MariaDB `>= 10.6`
+> - Ekstensi PHP: `BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML, cURL, GD`
+>
+> Jika versi Anda di bawah ketentuan di atas, kemungkinan akan muncul error saat instalasi.
+
 ```bash
 # 1. Clone repositori
 git clone <repo-url> kemasan-umkm
@@ -293,49 +302,80 @@ Default user seeder:
 ```mermaid
 graph TD
     subgraph "Sistem Informasi Kemasan UMKM"
-        UC1(Login)
-        UC2(Lihat Dashboard)
-        UC3(Kelola Produk)
-        UC4(Kelola Bahan Baku)
-        UC5(Kelola Kemasan)
-        UC6(Kelola Pengemasan)
-        UC7(Input Progres Pengemasan)
-        UC8(Lihat Stok)
-        UC9(Lihat Riwayat)
-        UC10(Kelola Laporan)
-        UC11(Kelola Pengguna)
-        UC12(Export CSV/PDF)
+        subgraph "Autentikasi"
+            A1(Login)
+            A2(Logout)
+            A3(Validasi Kredensial)
+        end
+
+        subgraph "Dashboard"
+            B1(Lihat Dashboard)
+        end
+
+        subgraph "Master Data"
+            C1(Kelola Produk)
+            C2(Kelola Bahan Baku)
+            C3(Kelola Kemasan)
+            C4(Tambah Stok Bahan)
+        end
+
+        subgraph "Pengemasan"
+            D1(Kelola Pengemasan)
+            D2(Input Progres)
+            D3(Batalkan Pengemasan)
+            D4(Cek Stok Bahan)
+        end
+
+        subgraph "Monitoring"
+            E1(Lihat Stok)
+            E2(Lihat Riwayat)
+        end
+
+        subgraph "Laporan & Pengguna"
+            F1(Kelola Laporan)
+            F2(Export Laporan)
+            F3(Filter Data)
+            F4(Kelola Pengguna)
+        end
     end
 
-    Actor1([Admin]) --> UC1
-    Actor1 --> UC2
-    Actor1 --> UC3
-    Actor1 --> UC4
-    Actor1 --> UC5
-    Actor1 --> UC6
-    Actor1 --> UC7
-    Actor1 --> UC8
-    Actor1 --> UC9
-    Actor1 --> UC10
-    Actor1 --> UC11
-    Actor1 --> UC12
+    A1 -.->|<<include>>| A3
+    C2 -.->|<<extend>>| C4
+    D1 -.->|<<extend>>| D2
+    D1 -.->|<<extend>>| D3
+    D1 -.->|<<include>>| D4
+    F1 -.->|<<extend>>| F2
+    F1 -.->|<<include>>| F3
 
-    Actor2([Operator]) --> UC1
-    Actor2 --> UC2
-    Actor2 --> UC7
-    Actor2 --> UC8
-    Actor2 --> UC9
+    Actor1([Admin]) --- A1
+    Actor1 --- A2
+    Actor1 --- B1
+    Actor1 --- C1
+    Actor1 --- C2
+    Actor1 --- C3
+    Actor1 --- D1
+    Actor1 --- E1
+    Actor1 --- E2
+    Actor1 --- F1
+    Actor1 --- F4
 
-    Actor3([Pemilik]) --> UC1
-    Actor3 --> UC2
-    Actor3 --> UC3
-    Actor3 --> UC4
-    Actor3 --> UC5
-    Actor3 --> UC8
-    Actor3 --> UC9
-    Actor3 --> UC10
-    Actor3 --> UC11
-    Actor3 --> UC12
+    Actor2([Operator]) --- A1
+    Actor2 --- A2
+    Actor2 --- B1
+    Actor2 --- D2
+    Actor2 --- E1
+    Actor2 --- E2
+
+    Actor3([Pemilik]) --- A1
+    Actor3 --- A2
+    Actor3 --- B1
+    Actor3 --- C1
+    Actor3 --- C2
+    Actor3 --- C3
+    Actor3 --- E1
+    Actor3 --- E2
+    Actor3 --- F1
+    Actor3 --- F4
 ```
 
 ---
