@@ -1,6 +1,6 @@
-# SI Kemasan UMKM
+# KemasIn
 
-**Sistem Informasi Manajemen Produksi & Pengemasan** — Aplikasi berbasis web untuk mengelola produksi, pengemasan, stok bahan baku, dan stok produk jadi pada UMKM.
+**Sistem Informasi Manajemen Pengemasan** — Aplikasi berbasis web untuk mengelola pengemasan, stok bahan baku, dan stok produk jadi pada UMKM.
 
 ## Daftar Isi
 
@@ -22,7 +22,7 @@
 
 ## Pendahuluan
 
-SI Kemasan UMKM dikembangkan menggunakan pendekatan **Rational Unified Process (RUP)** yang terdiri dari 4 fase:
+KemasIn dikembangkan menggunakan pendekatan **Rational Unified Process (RUP)** yang terdiri dari 4 fase:
 
 1. **Inception** — Identifikasi kebutuhan sistem, analisis aktor dan use case
 2. **Elaboration** — Perancangan arsitektur, class diagram, ERD, dan basis data
@@ -84,97 +84,114 @@ SI Kemasan UMKM dikembangkan menggunakan pendekatan **Rational Unified Process (
 
 ### 1. `tbl_produk`
 
-| Kolom          | Tipe         | Keterangan                          |
-| -------------- | ------------ | ----------------------------------- |
-| id_produk      | char(36) PK  | UUID                                |
-| nama_produk    | varchar(100) | Nama produk                         |
-| stok_tersedia  | int(11)      | Stok belum dikemas                  |
-| stok_dikemas   | int(11)      | Stok sudah dikemas                  |
-| minimal_stok   | int(11)      | Ambang batas minimal stok           |
-| harga_jual     | decimal(15,2)| Harga jual per unit                 |
-| deskripsi      | text         | Deskripsi produk                    |
-| created_at     | timestamp    | -                                   |
-| updated_at     | timestamp    | -                                   |
+| Kolom              | Tipe          | Keterangan                           |
+| ------------------ | ------------- | ------------------------------------ |
+| id_produk          | int(11) PK    | Auto Increment                       |
+| nama_produk        | varchar(100)  | Nama produk                          |
+| stok_tersedia      | int(11)       | Stok belum dikemas                   |
+| stok_sudah_dikemas | int(11)       | Stok sudah dikemas                   |
+| stok_minimum       | int(11)       | Ambang batas minimal stok            |
+| harga_produk       | decimal(12,2) | Harga jual per unit                  |
+| keterangan         | text          | Deskripsi produk (nullable)          |
+| created_at         | timestamp     | -                                    |
+| updated_at         | timestamp     | -                                    |
 
 ### 2. `tbl_kemasan`
 
-| Kolom           | Tipe         | Keterangan                         |
-| --------------- | ------------ | ---------------------------------- |
-| id_kemasan      | char(36) PK  | UUID                               |
-| nama_kemasan    | varchar(100) | Nama jenis kemasan                 |
-| kapasitas       | int(11)      | Kapasitas per kemasan              |
-| harga_kemasan   | decimal(15,2)| Harga satuan kemasan               |
-| deskripsi       | text         | Deskripsi kemasan                  |
-| created_at      | timestamp    | -                                  |
-| updated_at      | timestamp    | -                                  |
+| Kolom         | Tipe          | Keterangan                      |
+| ------------- | ------------- | ------------------------------- |
+| id_kemasan    | int(11) PK    | Auto Increment                  |
+| nama_kemasan  | varchar(100)  | Nama jenis kemasan              |
+| ukuran        | varchar(50)   | Ukuran kemasan                  |
+| harga_kemasan | decimal(12,2) | Harga satuan kemasan            |
+| created_at    | timestamp     | -                               |
+| updated_at    | timestamp     | -                               |
+
+### 2b. `tbl_kemasan_bahan` (resep kemasan)
+
+| Kolom            | Tipe          | Keterangan                      |
+| ---------------- | ------------- | ------------------------------- |
+| id_kemasan_bahan | int(11) PK    | Auto Increment                  |
+| id_kemasan       | int(11) FK    | Relasi ke tbl_kemasan           |
+| id_bahan         | int(11) FK    | Relasi ke tbl_bahan_baku        |
+| jumlah_per_unit  | decimal(10,2) | Jumlah bahan per unit kemasan   |
 
 ### 3. `tbl_bahan_baku`
 
-| Kolom           | Tipe         | Keterangan                         |
-| --------------- | ------------ | ---------------------------------- |
-| id_bahan        | char(36) PK  | UUID                               |
-| nama_bahan      | varchar(100) | Nama bahan baku                    |
-| satuan          | varchar(50)  | Satuan (kg, pcs, liter, dll)       |
-| stok_tersedia   | int(11)      | Stok saat ini                      |
-| minimal_stok    | int(11)      | Ambang batas minimal               |
-| harga_satuan    | decimal(15,2)| Harga per satuan                   |
-| created_at      | timestamp    | -                                  |
-| updated_at      | timestamp    | -                                  |
+| Kolom            | Tipe          | Keterangan                        |
+| ---------------- | ------------- | --------------------------------- |
+| id_bahan         | int(11) PK    | Auto Increment                    |
+| nama_bahan       | varchar(100)  | Nama bahan baku                   |
+| satuan           | varchar(20)   | Satuan (kg, pcs, liter, dll)      |
+| stok_tersedia    | decimal(10,2) | Stok saat ini                     |
+| stok_minimum     | decimal(10,2) | Ambang batas minimal              |
+| harga_per_satuan | decimal(12,2) | Harga per satuan                  |
+| keterangan       | text          | Catatan (nullable)                |
+| created_at       | timestamp     | -                                 |
+| updated_at       | timestamp     | -                                 |
 
 ### 4. `tbl_pengemasan`
 
-| Kolom              | Tipe         | Keterangan                                |
-| ------------------ | ------------ | ----------------------------------------- |
-| id_pengemasan      | char(36) PK  | UUID                                      |
-| id_produk          | char(36) FK  | Relasi ke tbl_produk                      |
-| id_kemasan         | char(36) FK  | Relasi ke tbl_kemasan                     |
-| tgl_pengemasan     | date         | Tanggal pelaksanaan                       |
-| target_jumlah      | int(11)      | Target jumlah produksi                    |
-| hasil_pengemasan   | int(11)      | Hasil akhir (update dari progres)         |
-| status             | enum         | `proses`, `selesai`, `dibatalkan`         |
-| created_at         | timestamp    | -                                         |
-| updated_at         | timestamp    | -                                         |
+| Kolom                  | Tipe          | Keterangan                                |
+| ---------------------- | ------------- | ----------------------------------------- |
+| id_pengemasan          | int(11) PK    | Auto Increment                            |
+| id_produk              | int(11) FK    | Relasi ke tbl_produk                      |
+| id_kemasan             | int(11) FK    | Relasi ke tbl_kemasan                     |
+| id_produksi            | int(11) FK    | Relasi ke tbl_produksi (nullable)         |
+| tgl_pengemasan         | date          | Tanggal pelaksanaan                       |
+| target_jumlah          | int(11)       | Target jumlah pengemasan                  |
+| hasil_pengemasan       | int(11)       | Hasil akhir (update dari progres)         |
+| expired_date           | date          | Tanggal kadaluarsa produk                 |
+| id_pengguna            | int(11) FK    | Pembuat/penanggung jawab                  |
+| id_operator_ditugaskan | int(11) FK    | Operator ditugaskan (nullable)            |
+| status                 | varchar       | `direncanakan`, `proses`, `selesai`, `dibatalkan` |
+| created_at             | timestamp     | -                                         |
+| updated_at             | timestamp     | -                                         |
 
 ### 5. `tbl_pengemasan_bahan`
 
-| Kolom                | Tipe         | Keterangan                         |
-| -------------------- | ------------ | ---------------------------------- |
-| id_pengemasan_bahan  | char(36) PK  | UUID                               |
-| id_pengemasan        | char(36) FK  | Relasi ke tbl_pengemasan           |
-| id_bahan             | char(36) FK  | Relasi ke tbl_bahan_baku           |
-| jumlah_dibutuhkan    | int(11)      | Jumlah bahan untuk batch ini       |
-| created_at           | timestamp    | -                                  |
-| updated_at           | timestamp    | -                                  |
+| Kolom               | Tipe          | Keterangan                         |
+| ------------------- | ------------- | ---------------------------------- |
+| id_pengemasan_bahan | int(11) PK    | Auto Increment                     |
+| id_pengemasan       | int(11) FK    | Relasi ke tbl_pengemasan           |
+| id_bahan            | int(11) FK    | Relasi ke tbl_bahan_baku           |
+| jumlah_per_unit     | decimal(10,2) | Kebutuhan bahan per unit           |
+| total_terealisasi   | decimal(10,2) | Total realisasi pemakaian          |
 
-### 6. `tbl_progres_pengemasan`
+### 5b. `tbl_pengemasan_operator` (many-to-many)
 
-| Kolom                | Tipe         | Keterangan                         |
-| -------------------- | ------------ | ---------------------------------- |
-| id_progres           | char(36) PK  | UUID                               |
-| id_pengemasan        | char(36) FK  | Relasi ke tbl_pengemasan           |
-| id_pengguna          | int(11) FK   | Relasi ke tbl_pengguna             |
-| jumlah_diproses      | int(11)      | Jumlah yang diproses               |
-| keterangan           | text         | Catatan progres                    |
-| waktu_diproses       | datetime     | Waktu input progres                |
-| created_at           | timestamp    | -                                  |
-| updated_at           | timestamp    | -                                  |
+| Kolom                  | Tipe        | Keterangan                        |
+| ---------------------- | ----------- | --------------------------------- |
+| id_pengemasan_operator | int(11) PK  | Auto Increment                    |
+| id_pengemasan          | int(11)     | Relasi ke tbl_pengemasan          |
+| id_pengguna            | int(11)     | Relasi ke tbl_pengguna (operator) |
+
+### 6. `tbl_pengemasan_progres`
+
+| Kolom          | Tipe        | Keterangan                          |
+| -------------- | ----------- | ----------------------------------- |
+| id_progres     | int(11) PK  | Auto Increment                      |
+| id_pengemasan  | int(11) FK  | Relasi ke tbl_pengemasan            |
+| id_pengguna    | int(11) FK  | Relasi ke tbl_pengguna              |
+| jumlah_dikemas | int(11)     | Jumlah yang diproses                |
+| keterangan     | text        | Catatan progres (nullable)          |
+| waktu_diproses | datetime    | Waktu input progres (nullable)      |
 
 ### 7. `tbl_mutasi_bahan`
 
-| Kolom           | Tipe         | Keterangan                                |
-| --------------- | ------------ | ----------------------------------------- |
-| id_mutasi       | char(36) PK  | UUID                                      |
-| id_bahan        | char(36) FK  | Relasi ke tbl_bahan_baku                  |
-| id_pengguna     | int(11) FK   | Relasi ke tbl_pengguna                    |
-| jenis           | enum         | `pemakaian`, `penambahan`, `bahan_baru`, `penyesuaian` |
-| jumlah          | int(11)      | Jumlah perubahan                          |
-| stok_sebelum    | int(11)      | Stok sebelum perubahan                    |
-| stok_sesudah    | int(11)      | Stok sesudah perubahan                    |
-| harga_sebelum   | decimal(15,2)| Harga satuan sebelum                      |
-| harga_sesudah   | decimal(15,2)| Harga satuan sesudah                      |
-| keterangan      | text         | Catatan mutasi                            |
-| created_at      | timestamp    | -                                         |
-| updated_at      | timestamp    | -                                         |
+| Kolom         | Tipe          | Keterangan                                |
+| ------------- | ------------- | ----------------------------------------- |
+| id_mutasi     | int(11) PK    | Auto Increment                            |
+| id_bahan      | int(11) FK    | Relasi ke tbl_bahan_baku                  |
+| jenis         | varchar(30)   | `pemakaian`, `penambahan`, `bahan_baru`, `penyesuaian` |
+| jumlah        | decimal(10,2) | Jumlah perubahan                          |
+| stok_sebelum  | decimal(10,2) | Stok sebelum perubahan                    |
+| stok_sesudah  | decimal(10,2) | Stok sesudah perubahan                    |
+| harga_sebelum | decimal(12,2) | Harga satuan sebelum (nullable)           |
+| harga_sesudah | decimal(12,2) | Harga satuan sesudah (nullable)           |
+| keterangan    | text          | Catatan mutasi (nullable)                 |
+| id_pengguna   | int(11)       | Relasi ke tbl_pengguna (nullable)         |
+| created_at    | datetime      | Waktu mutasi (manual)                     |
 
 ### 8. `tbl_pengguna`
 
@@ -185,8 +202,8 @@ SI Kemasan UMKM dikembangkan menggunakan pendekatan **Rational Unified Process (
 | password      | varchar(255)  | Hash bcrypt                     |
 | nama_lengkap  | varchar(100)  | Nama lengkap pengguna           |
 | role          | enum          | `admin`, `operator`, `pemilik`  |
-| created_at    | timestamp     | -                               |
-| updated_at    | timestamp     | -                               |
+| created_at    | datetime      | (nullable)                      |
+| updated_at    | datetime      | (nullable)                      |
 
 ---
 
@@ -663,31 +680,31 @@ flowchart TD
 
 ### `tbl_produk`
 
-Menyimpan data master produk (barang jadi). Memiliki dua jenis stok: `stok_tersedia` (belum dikemas) dan `stok_dikemas` (sudah dikemas). Saat pengemasan selesai, `stok_tersedia` produk akan berkurang dan `stok_dikemas` bertambah. Kolom `minimal_stok` digunakan untuk menandai produk kritis di dashboard.
+Menyimpan data master produk (barang jadi). Memiliki dua jenis stok: `stok_tersedia` (belum dikemas) dan `stok_sudah_dikemas` (sudah dikemas). Saat progres pengemasan dicatat, `stok_tersedia` akan berkurang dan `stok_sudah_dikemas` bertambah. Kolom `stok_minimum` digunakan untuk menandai produk kritis di dashboard.
 
 ### `tbl_kemasan`
 
-Menyimpan data master kemasan. Setiap kemasan bisa memiliki `kapasitas` (jumlah produk per kemasan). Relasi ke bahan baku dijembatani oleh `tbl_pengemasan_bahan` yang berisi resep bahan untuk setiap batch pengemasan.
+Menyimpan data master kemasan dengan `ukuran` (misal: 500gr, 1kg). Relasi ke bahan baku dijembatani oleh `tbl_kemasan_bahan` yang berisi resep (`jumlah_per_unit`) untuk setiap jenis kemasan.
 
 ### `tbl_bahan_baku`
 
-Menyimpan data bahan baku dengan stok dan harga satuan. Setiap perubahan stok (penambahan, pemakaian, penyesuaian) dicatat di `tbl_mutasi_bahan`. Kolom `minimal_stok` digunakan untuk menandai bahan kritis.
+Menyimpan data bahan baku dengan stok (desimal) dan harga per satuan. Setiap perubahan stok dicatat di `tbl_mutasi_bahan`. Kolom `stok_minimum` digunakan untuk menandai bahan kritis.
 
 ### `tbl_pengemasan`
 
-Entitas utama proses pengemasan. Mencatat produk apa yang dikemas, menggunakan kemasan apa, target jumlah, hasil akhir, dan status. Status `proses` berarti masih berjalan, `selesai` berarti semua progres telah memenuhi target, dan `dibatalkan` berarti dibatalkan dan stok bahan dikembalikan.
+Entitas utama proses pengemasan. Mencatat produk, kemasan, target, hasil, tanggal kadaluarsa, penanggung jawab, dan status. Status: `direncanakan` (baru dibuat), `proses` (sedang berjalan), `selesai` (target tercapai), `dibatalkan` (stok bahan dikembalikan). Operator dapat ditugaskan melalui relasi many-to-many di `tbl_pengemasan_operator`.
 
-### `tbl_pengemasan_bahan`
+### `tbl_pengemasan_bahan` & `tbl_kemasan_bahan`
 
-Junction table antara pengemasan dan bahan baku. Mencatat berapa banyak bahan yang dibutuhkan untuk satu batch pengemasan tertentu. Resep bahan bisa berbeda antar kemasan untuk produk yang sama.
+Dua tabel berbeda untuk kebutuhan bahan: `tbl_kemasan_bahan` menyimpan resep standar (jumlah bahan per unit kemasan), sedangkan `tbl_pengemasan_bahan` mencatat realisasi pemakaian bahan untuk setiap batch pengemasan tertentu (dengan kolom `total_terealisasi`).
 
-### `tbl_progres_pengemasan`
+### `tbl_pengemasan_progres`
 
-Mencatat input progres harian oleh operator. Setiap kali operator menambahkan progres, sistem mengakumulasi `jumlah_diproses` ke `hasil_pengemasan`. Mencatat waktu, jumlah, dan pengguna yang memproses.
+Mencatat input progres oleh operator. Setiap kali operator menambahkan progres, `jumlah_dikemas` diakumulasi ke `hasil_pengemasan` di tabel pengemasan. Tidak memiliki timestamps otomatis — menggunakan `waktu_diproses` manual.
 
 ### `tbl_mutasi_bahan`
 
-Log/snapshot semua perubahan stok bahan baku. Menyimpan stok dan harga sebelum/sesudah sehingga riwayat perubahan terlacak. Jenis mutasi: `pemakaian` (saat pengemasan), `penambahan` (tambah stok manual), `bahan_baru` (saat create bahan), `penyesuaian` (koreksi stok).
+Log/snapshot perubahan stok bahan baku. Menyimpan stok dan harga sebelum/sesudah. Jenis mutasi: `pemakaian` (saat pengemasan), `penambahan` (tambah stok manual), `bahan_baru` (saat create bahan), `penyesuaian` (koreksi stok). Kolom `created_at` diisi manual (tanpa timestamps otomatis).
 
 ### `tbl_pengguna`
 

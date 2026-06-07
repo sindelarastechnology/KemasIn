@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KemasIn - Dokumentasi Sistem</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js">
+    </script>
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --primary-dark: #0a58ca;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            padding-top: 0;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+            background: #1a1d21;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s;
+        }
+
+        .sidebar .brand {
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .sidebar .brand h5 {
+            color: #fff;
+            font-weight: 700;
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .sidebar .brand small {
+            color: rgba(255, 255, 255, .5);
+            font-size: 11px;
+        }
+
+        .sidebar .nav-section {
+            padding: 12px 20px 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, .3);
+            font-weight: 600;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, .65);
+            padding: 8px 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.15s;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .05);
+            border-left-color: var(--primary);
+        }
+
+        .sidebar .nav-link i {
+            width: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* ===== MAIN ===== */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: #fff;
+            padding: 12px 32px;
+            border-bottom: 1px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .top-bar .toggle-sidebar {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #495057;
+            cursor: pointer;
+        }
+
+        .top-bar .page-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #212529;
+        }
+
+        .top-bar .badge-ver {
+            background: #e8f0fe;
+            color: var(--primary);
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .content-area {
+            padding: 32px;
+            max-width: 1100px;
+        }
+
+        /* ===== CARDS ===== */
+        .section-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .05);
+            margin-bottom: 28px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .section-card .card-header-custom {
+            padding: 18px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 17px;
+            color: #212529;
+            background: #fafbfc;
+        }
+
+        .section-card .card-header-custom i {
+            color: var(--primary);
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .section-card .card-body-custom {
+            padding: 24px;
+        }
+
+        /* ===== TABLES ===== */
+        .table-db {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .table-db th {
+            background: #f8f9fa;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            color: #6c757d;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .table-db td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+
+        .table-db tr:hover td {
+            background: #f8f9ff;
+        }
+
+        .table-db .badge-pk {
+            background: #fff3cd;
+            color: #856404;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .table-db .badge-fk {
+            background: #cce5ff;
+            color: #004085;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .table-db .badge-type {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #495057;
+        }
+
+        /* ===== MERMAID ===== */
+        .mermaid-wrapper {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            text-align: center;
+            min-height: 100px;
+        }
+
+        .mermaid-wrapper svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* ===== FEATURES ===== */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+        }
+
+        .feature-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            border: 1px solid #eee;
+            transition: all 0.15s;
+        }
+
+        .feature-item:hover {
+            border-color: var(--primary);
+            background: #f0f4ff;
+            transform: translateY(-1px);
+        }
+
+        .feature-item .fi-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .feature-item .fi-icon.bg-blue {
+            background: var(--primary);
+        }
+        .feature-item .fi-icon.bg-green {
+            background: #198754;
+        }
+        .feature-item .fi-icon.bg-orange {
+            background: #fd7e14;
+        }
+        .feature-item .fi-icon.bg-purple {
+            background: #6f42c1;
+        }
+        .feature-item .fi-icon.bg-red {
+            background: #dc3545;
+        }
+        .feature-item .fi-icon.bg-teal {
+            background: #20c997;
+        }
+
+        /* ===== ALERT ===== */
+        .alert-requirements {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 12px;
+            padding: 20px 24px;
+            color: #664d03;
+        }
+
+        .alert-requirements strong {
+            font-size: 15px;
+        }
+
+        .alert-requirements ul {
+            margin: 10px 0 0;
+            padding-left: 20px;
+        }
+
+        .alert-requirements ul li {
+            margin-bottom: 4px;
+        }
+
+        /* ===== ROLE BADGES ===== */
+        .role-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .role-table th {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #6c757d;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .role-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .role-table .role-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .role-badge.admin {
+            background: #cce5ff;
+            color: #004085;
+        }
+        .role-badge.operator {
+            background: #d4edda;
+            color: #155724;
+        }
+        .role-badge.pemilik {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* ===== TECH BADGES ===== */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tech-badge {
+            background: #e8f0fe;
+            color: var(--primary-dark);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tech-badge i {
+            font-size: 16px;
+        }
+
+        /* ===== TREE ===== */
+        .tree {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            background: #1a1d21;
+            color: #e9ecef;
+            border-radius: 12px;
+            padding: 20px 24px;
+            overflow-x: auto;
+        }
+
+        .tree .highlight {
+            color: #7ec8e3;
+        }
+        .tree .highlight2 {
+            color: #c3e88d;
+        }
+        .tree .highlight3 {
+            color: #ffcb6b;
+        }
+
+        /* ===== INSTALL CODE ===== */
+        .code-block {
+            background: #1a1d21;
+            color: #e9ecef;
+            border-radius: 12px;
+            padding: 20px 24px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            overflow-x: auto;
+        }
+
+        .code-block .comment {
+            color: #6c757d;
+        }
+        .code-block .cmd {
+            color: #c3e88d;
+        }
+
+        /* ===== PENJELASAN ===== */
+        .table-desc {
+            border-left: 4px solid var(--primary);
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-radius: 0 10px 10px 0;
+            margin: 16px 0;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #495057;
+        }
+
+        .table-desc strong {
+            color: #212529;
+        }
+
+        /* ===== SEEDER TABLE ===== */
+        .seeder-table {
+            width: auto;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .seeder-table th {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #6c757d;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .seeder-table td {
+            padding: 10px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+            }
+
+            .top-bar .toggle-sidebar {
+                display: block;
+            }
+
+            .content-area {
+                padding: 20px 16px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .content-area {
+                padding: 16px 12px;
+            }
+
+            .section-card .card-header-custom {
+                padding: 14px 16px;
+                font-size: 15px;
+            }
+
+            .section-card .card-body-custom {
+                padding: 16px;
+            }
+
+            .table-db {
+                font-size: 12px;
+            }
+
+            .table-db th,
+            .table-db td {
+                padding: 8px 10px;
+            }
+        }
+
+        /* ===== MERMAID OVERRIDE ===== */
+        .mermaid {
+            font-family: 'Segoe UI', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    <nav class="sidebar" id="sidebar">
+        <div class="brand">
+            <h5><i class="fas fa-cube me-2" style="color:#0d6efd"></i>KemasIn</h5>
+            <small>Sistem Informasi Manajemen Pengemasan</small>
+        </div>
+
+        <div class="nav-section">Dokumentasi</div>
+        <a class="nav-link" href="#pendahuluan"><i class="fas fa-info-circle"></i> Pendahuluan</a>
+        <a class="nav-link" href="#teknologi"><i class="fas fa-microchip"></i> Teknologi</a>
+        <a class="nav-link" href="#fitur"><i class="fas fa-list-check"></i> Fitur</a>
+        <a class="nav-link" href="#role"><i class="fas fa-users"></i> Role & Hak Akses</a>
+
+        <div class="nav-section">Perancangan</div>
+        <a class="nav-link" href="#use-case"><i class="fas fa-diagram-project"></i> Use Case Diagram</a>
+        <a class="nav-link" href="#activity"><i class="fas fa-arrows-spin"></i> Activity Diagram</a>
+        <a class="nav-link" href="#class-diagram"><i class="fas fa-sitemap"></i> Class Diagram</a>
+        <a class="nav-link" href="#erd"><i class="fas fa-database"></i> Entity Relationship Diagram</a>
+        <a class="nav-link" href="#flowchart"><i class="fas fa-code-branch"></i> Flowchart</a>
+
+        <div class="nav-section">Database</div>
+        <a class="nav-link" href="#struktur-db"><i class="fas fa-table"></i> Struktur Database</a>
+        <a class="nav-link" href="#penjabaran"><i class="fas fa-book-open"></i> Penjabaran Tabel</a>
+
+        <div class="nav-section">Implementasi</div>
+        <a class="nav-link" href="#arsitektur"><i class="fas fa-folder-tree"></i> Arsitektur Aplikasi</a>
+        <a class="nav-link" href="#instalasi"><i class="fas fa-download"></i> Cara Instalasi</a>
+    </nav>
+
+    <!-- ===== OVERLAY ===== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999"
+    onclick="toggleSidebar()"></div>
+
+    <!-- ===== MAIN ===== -->
+    <div class="main-wrapper">
+
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="toggle-sidebar" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <span class="page-title">Dokumentasi Sistem</span>
+            </div>
+            <span class="badge-ver">
+                <i class="fas fa-tag me-1"></i> PHP 8.3 &middot; Laravel 13
+            </span>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content-area">
+
+            <!-- ==================== PENDAHULUAN ==================== -->
+            <div class="section-card" id="pendahuluan">
+                <div class="card-header-custom">
+                    <i class="fas fa-info-circle"></i> Pendahuluan
+                </div>
+                <div class="card-body-custom">
+                    <p style="font-size:15px;line-height:1.7;color:#333">
+                        <strong>KemasIn</strong> adalah aplikasi berbasis web untuk mengelola pengemasan,
+                        stok bahan baku, dan stok produk jadi pada UMKM.
+                        Dikembangkan menggunakan pendekatan <strong>Rational Unified Process (RUP)</strong>
+                        yang terdiri dari 4 fase:
+                    </p>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 bg-light rounded-3 text-center h-100">
+                                <div class="fs-4 fw-bold text-primary">01</div>
+                                <div class="fw-semibold small">Inception</div>
+                                <div class="text-muted" style="font-size:12px">Identifikasi kebutuhan & analisis aktor</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 bg-light rounded-3 text-center h-100">
+                                <div class="fs-4 fw-bold text-success">02</div>
+                                <div class="fw-semibold small">Elaboration</div>
+                                <div class="text-muted" style="font-size:12px">Perancangan arsitektur & basis data</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 bg-light rounded-3 text-center h-100">
+                                <div class="fs-4 fw-bold text-warning">03</div>
+                                <div class="fw-semibold small">Construction</div>
+                                <div class="text-muted" style="font-size:12px">Implementasi kode & pengujian</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 bg-light rounded-3 text-center h-100">
+                                <div class="fs-4 fw-bold text-danger">04</div>
+                                <div class="fw-semibold small">Transition</div>
+                                <div class="text-muted" style="font-size:12px">Deployment & pelatihan</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold mt-4 mb-2"><i class="fas fa-bullseye text-primary me-1"></i> Tujuan Sistem</h6>
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <div class="fi-icon bg-blue"><i class="fas fa-box"></i></div>
+                            Mendata produk dan kemasan yang tersedia
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-green"><i class="fas fa-industry"></i></div>
+                            Mencatat proses pengemasan dari awal hingga selesai
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-orange"><i class="fas fa-eye"></i></div>
+                            Memantau stok bahan baku dan produk jadi
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-purple"><i class="fas fa-chart-bar"></i></div>
+                            Menghasilkan laporan pengemasan dan mutasi bahan baku
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-red"><i class="fas fa-users"></i></div>
+                            Mendukung tiga level pengguna: Admin, Operator, Pemilik
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TEKNOLOGI ==================== -->
+            <div class="section-card" id="teknologi">
+                <div class="card-header-custom">
+                    <i class="fas fa-microchip"></i> Teknologi
+                </div>
+                <div class="card-body-custom">
+                    <div class="tech-stack mb-3">
+                        <span class="tech-badge"><i class="fab fa-php"></i> PHP 8.3</span>
+                        <span class="tech-badge"><i class="fab fa-laravel"></i> Laravel 13</span>
+                        <span class="tech-badge"><i class="fab fa-bootstrap"></i> Bootstrap 5.3</span>
+                        <span class="tech-badge"><i class="fab fa-js"></i> jQuery & Chart.js</span>
+                        <span class="tech-badge"><i class="fas fa-database"></i> MySQL / MariaDB</span>
+                        <span class="tech-badge"><i class="fas fa-file-pdf"></i> DomPDF</span>
+                        <span class="tech-badge"><i class="fas fa-paint-brush"></i> Font Awesome 6</span>
+                        <span class="tech-badge"><i class="fas fa-shield-alt"></i> Session Auth (Manual)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== FITUR ==================== -->
+            <div class="section-card" id="fitur">
+                <div class="card-header-custom">
+                    <i class="fas fa-list-check"></i> Fitur
+                </div>
+                <div class="card-body-custom">
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <div class="fi-icon bg-blue"><i class="fas fa-sign-in-alt"></i></div>
+                            <strong>Autentikasi</strong> &mdash; Login/Logout
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-green"><i class="fas fa-tachometer-alt"></i></div>
+                            <strong>Dashboard</strong> &mdash; KPI, grafik 7 hari
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-purple"><i class="fas fa-cube"></i></div>
+                            <strong>Master Produk</strong> &mdash; CRUD produk
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-orange"><i class="fas fa-flask"></i></div>
+                            <strong>Bahan Baku</strong> &mdash; CRUD + tambah stok
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-teal"><i class="fas fa-tag"></i></div>
+                            <strong>Kemasan</strong> &mdash; CRUD + resep bahan
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-red"><i class="fas fa-boxes"></i></div>
+                            <strong>Pengemasan</strong> &mdash; CRUD, progres, batalkan
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-blue"><i class="fas fa-warehouse"></i></div>
+                            <strong>Stok Produk</strong> &mdash; Stok terkini
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-green"><i class="fas fa-cubes"></i></div>
+                            <strong>Stok Bahan Baku</strong> &mdash; Stok terkini
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-orange"><i class="fas fa-history"></i></div>
+                            <strong>Riwayat Pengemasan</strong> &mdash; Log progres
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-purple"><i class="fas fa-exchange-alt"></i></div>
+                            <strong>Riwayat Mutasi Bahan</strong> &mdash; Log perubahan stok
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-red"><i class="fas fa-chart-bar"></i></div>
+                            <strong>Laporan</strong> &mdash; Filter, CSV, PDF
+                        </div>
+                        <div class="feature-item">
+                            <div class="fi-icon bg-teal"><i class="fas fa-users-cog"></i></div>
+                            <strong>Kelola Pengguna</strong> &mdash; CRUD user
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== ROLE & HAK AKSES ==================== -->
+            <div class="section-card" id="role">
+                <div class="card-header-custom">
+                    <i class="fas fa-users"></i> Role & Hak Akses
+                </div>
+                <div class="card-body-custom">
+                    <table class="role-table">
+                        <thead>
+                            <tr>
+                                <th>Role</th>
+                                <th>Akses</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="role-badge operator">Operator</span></td>
+                                <td>Dashboard, Pengemasan (lihat & progres), Stok, Riwayat</td>
+                            </tr>
+                            <tr>
+                                <td><span class="role-badge admin">Admin</span></td>
+                                <td>Semua fitur (termasuk CRUD pengemasan, master, laporan, pengguna)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="role-badge pemilik">Pemilik</span></td>
+                                <td>Master produk, bahan, kemasan, pengguna, laporan (tanpa CRUD pengemasan)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ==================== USE CASE DIAGRAM ==================== -->
+            <div class="section-card" id="use-case">
+                <div class="card-header-custom">
+                    <i class="fas fa-diagram-project"></i> Use Case Diagram
+                </div>
+                <div class="card-body-custom">
+                    <p style="color:#555;line-height:1.6">
+                        Diagram use case berikut menggambarkan interaksi antara <strong>3 aktor</strong>
+                        (Admin, Operator, Pemilik) dengan sistem. Relasi
+                        <code>&#171;include&#187;</code> menunjukkan fungsionalitas yang selalu dijalankan,
+                        sedangkan <code>&#171;extend&#187;</code> menunjukkan fungsionalitas opsional.
+                    </p>
+                    <div class="mermaid-wrapper">
+                        <div class="mermaid">%%{init: {'flowchart': {'useMaxWidth': true}}}%%
+                            graph TB
+                                subgraph Autentikasi
+                                    A1[Login]
+                                    A2[Logout]
+                                    A3[Validasi Kredensial]
+                                end
+
+                                subgraph Dashboard
+                                    B1[Lihat Dashboard]
+                                end
+
+                                subgraph MasterData
+                                    C1[Kelola Produk]
+                                    C2[Kelola Bahan Baku]
+                                    C3[Kelola Kemasan]
+                                    C4[Tambah Stok Bahan]
+                                end
+
+                                subgraph Pengemasan
+                                    D1[Kelola Pengemasan]
+                                    D2[Input Progres]
+                                    D3[Batalkan Pengemasan]
+                                    D4[Cek Stok Bahan]
+                                end
+
+                                subgraph Monitoring
+                                    E1[Lihat Stok]
+                                    E2[Lihat Riwayat]
+                                end
+
+                                subgraph Laporan
+                                    F1[Kelola Laporan]
+                                    F2[Export Laporan]
+                                    F3[Filter Data]
+                                    F4[Kelola Pengguna]
+                                end
+
+                                A1 -. include .-> A3
+                                C2 -. extend .-> C4
+                                D1 -. extend .-> D2
+                                D1 -. extend .-> D3
+                                D1 -. include .-> D4
+                                F1 -. extend .-> F2
+                                F1 -. include .-> F3
+
+                                Admin[Admin] --- A1
+                                Admin --- A2
+                                Admin --- B1
+                                Admin --- C1
+                                Admin --- C2
+                                Admin --- C3
+                                Admin --- D1
+                                Admin --- E1
+                                Admin --- E2
+                                Admin --- F1
+                                Admin --- F4
+
+                                Operator[Operator] --- A1
+                                Operator --- A2
+                                Operator --- B1
+                                Operator --- D2
+                                Operator --- E1
+                                Operator --- E2
+
+                                Pemilik[Pemilik] --- A1
+                                Pemilik --- A2
+                                Pemilik --- B1
+                                Pemilik --- C1
+                                Pemilik --- C2
+                                Pemilik --- C3
+                                Pemilik --- E1
+                                Pemilik --- E2
+                                Pemilik --- F1
+                                Pemilik --- F4
+                </div>
+            </div>
+
+            <!-- ==================== ACTIVITY DIAGRAM ==================== -->
+            <div class="section-card" id="activity">
+                <div class="card-header-custom">
+                    <i class="fas fa-arrows-spin"></i> Activity Diagram
+                </div>
+                <div class="card-body-custom">
+                    <h6 class="fw-bold mb-2"><i class="fas fa-play text-success me-1"></i> Input Progres Pengemasan</h6>
+                    <div class="mermaid-wrapper mb-4">
+                        <div class="mermaid">
+                            graph TD
+                            A([Operator/Admin login]) --> B{Buka halaman detail pengemasan}
+                            B --> C[Lihat daftar progres]
+                            C --> D[Klik Tambah Progres]
+                            D --> E[Isi jumlah dikemas & keterangan]
+                            E --> F[Submit]
+                            F --> G{Validasi}
+                            G -->|Tidak valid| E
+                            G -->|Valid| H[Simpan ke tbl_pengemasan_progres]
+                            H --> I[Update hasil_pengemasan di tbl_pengemasan]
+                            I --> J[Kurangi stok bahan baku]
+                            J --> K[Tambah stok_sudah_dikemas produk]
+                            K --> L[Catat mutasi bahan]
+                            L --> M[Tampilkan notifikasi sukses]
+                            M --> N([Selesai])
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold mb-2"><i class="fas fa-play text-primary me-1"></i> CRUD Produk</h6>
+                    <div class="mermaid-wrapper">
+                        <div class="mermaid">
+                            graph TD
+                            A([Admin/Pemilik login]) --> B[Buka menu Master Produk]
+                            B --> C{Pilih aksi}
+                            C -->|Tambah| D[Isi form produk]
+                            C -->|Edit| E[Ubah data produk]
+                            C -->|Hapus| F[Konfirmasi hapus]
+                            D --> G[Simpan]
+                            E --> G
+                            G --> H[Validasi]
+                            H -->|Tidak valid| D
+                            H -->|Valid| I[Simpan ke database]
+                            I --> J([Kembali ke daftar])
+                            F --> J
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== CLASS DIAGRAM ==================== -->
+            <div class="section-card" id="class-diagram">
+                <div class="card-header-custom">
+                    <i class="fas fa-sitemap"></i> Class Diagram
+                </div>
+                <div class="card-body-custom">
+                    <div class="mermaid-wrapper">
+                        <div class="mermaid">
+                            classDiagram
+                            class Pengguna {
+                                +int id_pengguna
+                                +string username
+                                +string password
+                                +string nama_lengkap
+                                +string role
+                            }
+
+                            class Produk {
+                                +int id_produk
+                                +string nama_produk
+                                +int stok_tersedia
+                                +int stok_sudah_dikemas
+                                +int stok_minimum
+                                +decimal harga_produk
+                                +text keterangan
+                            }
+
+                            class Kemasan {
+                                +int id_kemasan
+                                +string nama_kemasan
+                                +string ukuran
+                                +decimal harga_kemasan
+                                +bahan() KemasanBahan
+                            }
+
+                            class BahanBaku {
+                                +int id_bahan
+                                +string nama_bahan
+                                +string satuan
+                                +decimal stok_tersedia
+                                +decimal stok_minimum
+                                +decimal harga_per_satuan
+                            }
+
+                            class Pengemasan {
+                                +int id_pengemasan
+                                +int id_produk
+                                +int id_kemasan
+                                +date tgl_pengemasan
+                                +int target_jumlah
+                                +int hasil_pengemasan
+                                +string status
+                            }
+
+                            class PengemasanBahan {
+                                +int id_pengemasan_bahan
+                                +int id_pengemasan
+                                +int id_bahan
+                                +decimal jumlah_per_unit
+                                +decimal total_terealisasi
+                            }
+
+                            class KemasanBahan {
+                                +int id_kemasan_bahan
+                                +int id_kemasan
+                                +int id_bahan
+                                +decimal jumlah_per_unit
+                            }
+
+                            class ProgresPengemasan {
+                                +int id_progres
+                                +int id_pengemasan
+                                +int id_pengguna
+                                +int jumlah_dikemas
+                                +text keterangan
+                                +datetime waktu_diproses
+                            }
+
+                            class MutasiBahan {
+                                +int id_mutasi
+                                +int id_bahan
+                                +string jenis
+                                +decimal jumlah
+                                +decimal stok_sebelum
+                                +decimal stok_sesudah
+                                +decimal harga_sebelum
+                                +decimal harga_sesudah
+                                +text keterangan
+                                +int id_pengguna
+                                +datetime created_at
+                            }
+
+                            Pengemasan --> Produk
+                            Pengemasan --> Kemasan
+                            Kemasan --> KemasanBahan
+                            KemasanBahan --> BahanBaku
+                            Pengemasan --> PengemasanBahan
+                            PengemasanBahan --> BahanBaku
+                            Pengemasan --> ProgresPengemasan
+                            ProgresPengemasan --> Pengguna
+                            MutasiBahan --> BahanBaku
+                            MutasiBahan --> Pengguna
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== ERD ==================== -->
+            <div class="section-card" id="erd">
+                <div class="card-header-custom">
+                    <i class="fas fa-database"></i> Entity Relationship Diagram
+                </div>
+                <div class="card-body-custom">
+                    <div class="mermaid-wrapper">
+                        <div class="mermaid">
+                            erDiagram
+                            tbl_pengguna ||--o{ tbl_pengemasan_progres : "mencatat"
+                            tbl_pengguna ||--o{ tbl_mutasi_bahan : "melakukan"
+                            tbl_pengguna ||--o{ tbl_pengemasan_operator : "ditugaskan"
+
+                            tbl_produk ||--o{ tbl_pengemasan : "menjadi"
+                            tbl_kemasan ||--o{ tbl_pengemasan : "menggunakan"
+                            tbl_kemasan ||--o{ tbl_kemasan_bahan : "membutuhkan"
+
+                            tbl_pengemasan ||--o{ tbl_pengemasan_bahan : "memakai"
+                            tbl_pengemasan ||--o{ tbl_pengemasan_progres : "memiliki"
+                            tbl_pengemasan ||--o{ tbl_pengemasan_operator : "menugaskan"
+
+                            tbl_bahan_baku ||--o{ tbl_kemasan_bahan : "direkap"
+                            tbl_bahan_baku ||--o{ tbl_pengemasan_bahan : "direalisasi"
+                            tbl_bahan_baku ||--o{ tbl_mutasi_bahan : "dicatat"
+
+                            tbl_pengguna {
+                            int id_pengguna PK
+                            varchar username
+                            varchar password
+                            varchar nama_lengkap
+                            enum role
+                            datetime created_at
+                            datetime updated_at
+                            }
+
+                            tbl_produk {
+                            int id_produk PK
+                            varchar nama_produk
+                            int stok_tersedia
+                            int stok_sudah_dikemas
+                            int stok_minimum
+                            decimal harga_produk
+                            text keterangan
+                            timestamp created_at
+                            }
+
+                            tbl_kemasan {
+                            int id_kemasan PK
+                            varchar nama_kemasan
+                            varchar ukuran
+                            decimal harga_kemasan
+                            timestamp created_at
+                            }
+
+                            tbl_bahan_baku {
+                            int id_bahan PK
+                            varchar nama_bahan
+                            varchar satuan
+                            decimal stok_tersedia
+                            decimal stok_minimum
+                            decimal harga_per_satuan
+                            text keterangan
+                            timestamp created_at
+                            }
+
+                            tbl_kemasan_bahan {
+                            int id_kemasan_bahan PK
+                            int id_kemasan FK
+                            int id_bahan FK
+                            decimal jumlah_per_unit
+                            }
+
+                            tbl_pengemasan {
+                            int id_pengemasan PK
+                            int id_produk FK
+                            int id_kemasan FK
+                            int id_produksi FK
+                            date tgl_pengemasan
+                            int target_jumlah
+                            int hasil_pengemasan
+                            date expired_date
+                            int id_pengguna FK
+                            int id_operator_ditugaskan FK
+                            varchar status
+                            timestamp created_at
+                            }
+
+                            tbl_pengemasan_bahan {
+                            int id_pengemasan_bahan PK
+                            int id_pengemasan FK
+                            int id_bahan FK
+                            decimal jumlah_per_unit
+                            decimal total_terealisasi
+                            }
+
+                            tbl_pengemasan_operator {
+                            int id_pengemasan_operator PK
+                            int id_pengemasan FK
+                            int id_pengguna FK
+                            }
+
+                            tbl_pengemasan_progres {
+                            int id_progres PK
+                            int id_pengemasan FK
+                            int id_pengguna FK
+                            int jumlah_dikemas
+                            text keterangan
+                            datetime waktu_diproses
+                            }
+
+                            tbl_mutasi_bahan {
+                            int id_mutasi PK
+                            int id_bahan FK
+                            varchar jenis
+                            decimal jumlah
+                            decimal stok_sebelum
+                            decimal stok_sesudah
+                            decimal harga_sebelum
+                            decimal harga_sesudah
+                            text keterangan
+                            int id_pengguna FK
+                            datetime created_at
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== FLOWCHART ==================== -->
+            <div class="section-card" id="flowchart">
+                <div class="card-header-custom">
+                    <i class="fas fa-code-branch"></i> Flowchart &mdash; Alur Pengemasan
+                </div>
+                <div class="card-body-custom">
+                    <div class="mermaid-wrapper">
+                        <div class="mermaid">
+                            flowchart TD
+                            START([Mulai]) --> CEK_LOGIN{Login?}
+                            CEK_LOGIN -->|Tidak| LOGIN[Form Login]
+                            LOGIN --> CEK_LOGIN
+                            CEK_LOGIN -->|Ya| DASHBOARD[Dashboard]
+
+                            DASHBOARD --> MENU_BUAT[Buat Pengemasan]
+                            MENU_BUAT --> PILIH_PRODUK[Pilih Produk]
+                            PILIH_PRODUK --> PILIH_KEMASAN[Pilih Kemasan]
+                            PILIH_KEMASAN --> CEK_STOK{Stok Bahan\nMencukupi?}
+                            CEK_STOK -->|Tidak| ALERT[Tampilkan\nPeringatan]
+                            ALERT --> PILIH_KEMASAN
+                            CEK_STOK -->|Ya| INPUT_TARGET[Input Target Jumlah]
+                            INPUT_TARGET --> SIMPAN[Simpan Pengemasan\nStatus: direncanakan]
+                            SIMPAN --> KURANGI_STOK[Kurangi Stok\nBahan Baku]
+                            KURANGI_STOK --> CATAT_MUTASI[Catat Mutasi\nJenis: pemakaian]
+
+                            CATAT_MUTASI --> PROGRES[Input Progres\noleh Operator]
+                            PROGRES --> UPDATE_HASIL[Update\nhasil_pengemasan]
+                            UPDATE_HASIL --> CEK_SELESAI{Selesai?}
+                            CEK_SELESAI -->|Belum| PROGRES
+                            CEK_SELESAI -->|Ya| STATUS_SELESAI[Status: Selesai]
+                            STATUS_SELESAI --> UPDATE_STOK_PRODUK[Tambah\nstok_sudah_dikemas]
+                            UPDATE_STOK_PRODUK --> END([Selesai])
+
+                            DASHBOARD --> BATAL[Batalkan Pengemasan]
+                            BATAL --> RESTORE_STOK[Kembalikan\nStok Bahan]
+                            RESTORE_STOK --> STATUS_BATAL[Status: Dibatalkan]
+                            STATUS_BATAL --> END
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== STRUKTUR DATABASE ==================== -->
+            <div class="section-card" id="struktur-db">
+                <div class="card-header-custom">
+                    <i class="fas fa-table"></i> Struktur Database
+                </div>
+                <div class="card-body-custom">
+
+                    <!-- tbl_produk -->
+                    <h6 class="fw-bold mb-2">1. <code>tbl_produk</code></h6>
+                    <div class="table-responsive">
+                        <table class="table-db">
+                            <thead>
+                                <tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>id_produk</td><td><span class="badge-type">int(11)</span> <span class="badge-pk">PK</span></td><td>Auto Increment</td></tr>
+                                <tr><td>nama_produk</td><td><span class="badge-type">varchar(100)</span></td><td>Nama produk</td></tr>
+                                <tr><td>stok_tersedia</td><td><span class="badge-type">int(11)</span></td><td>Stok belum dikemas</td></tr>
+                                <tr><td>stok_sudah_dikemas</td><td><span class="badge-type">int(11)</span></td><td>Stok sudah dikemas</td></tr>
+                                <tr><td>stok_minimum</td><td><span class="badge-type">int(11)</span></td><td>Ambang batas minimal stok</td></tr>
+                                <tr><td>harga_produk</td><td><span class="badge-type">decimal(12,2)</span></td><td>Harga jual per unit</td></tr>
+                                <tr><td>keterangan</td><td><span class="badge-type">text</span></td><td>Deskripsi produk (nullable)</td></tr>
+                                <tr><td>created_at</td><td><span class="badge-type">timestamp</span></td><td>-</td></tr>
+                                <tr><td>updated_at</td><td><span class="badge-type">timestamp</span></td><td>-</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- tbl_kemasan -->
+                    <h6 class="fw-bold mt-4 mb-2">2. <code>tbl_kemasan</code></h6>
+                    <div class="table-responsive">
+                        <table class="table-db">
+                            <thead>
+                                <tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>id_kemasan</td><td><span class="badge-type">int(11)</span> <span class="badge-pk">PK</span></td><td>Auto Increment</td></tr>
+                                <tr><td>nama_kemasan</td><td><span class="badge-type">varchar(100)</span></td><td>Nama jenis kemasan</td></tr>
+                                <tr><td>ukuran</td><td><span class="badge-type">varchar(50)</span></td><td>Ukuran kemasan</td></tr>
+                                <tr><td>harga_kemasan</td><td><span class="badge-type">decimal(12,2)</span></td><td>Harga satuan kemasan</td></tr>
+                                <tr><td>created_at</td><td><span class="badge-type">timestamp</span></td><td>-</td></tr>
+                                <tr><td>updated_at</td><td><span class="badge-type">timestamp</span></td><td>-</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- tbl_kemasan_bahan -->
+                    <h6 class="fw-bold mt-4 mb-2">2b. <code>tbl_kemasan_bahan</code> (resep kemasan)</h6>
+                    <div class="table-responsive">
+                        <table class="table-db">
+                            <thead>
+                                <tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>id_kemasan_bahan</td><td><span class="badge-type">int(11)</span> <span class="badge-pk">PK</span></td><td>Auto Increment</td></tr>
+                                <tr><td>id_kemasan</td><td><span class="badge-type">int(11)</span> <span class="badge-fk">FK</span></td><td>Relasi ke tbl_kemasan</td></tr>
+                                <tr><td>id_bahan</td><td><span class="badge-type">int(11)</span> <span class="badge-fk">FK</span></td><td>Relasi ke tbl_bahan_baku</td></tr>
+                                <tr><td>jumlah_per_unit</td><td><span class="badge-type">decimal(10,2)</span></td><td>Jumlah bahan per unit kemasan</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- tbl_bahan_baku -->
+                    <h6 class="fw-bold mt-4 mb-2">3. <code>tbl_bahan_baku</code></h6>
+                    <div class="table-responsive">
+                        <table class="table-db">
+                            <thead>
+                                <tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>id_bahan</td><td><span class="badge-type">int(11)</span> <span class="badge-pk">PK</span></td><td>Auto Increment</td></tr>
+                                <tr><td>nama_bahan</td><td><span class="badge-type">varchar(100)</span></td><td>Nama bahan baku</td></tr>
+                                <tr><td>satuan</td><td><span class="badge-type">varchar(20)</span></td><td>Satuan (kg, pcs, liter, dll)</td></tr>
+                                <tr><td>stok_tersedia</td><td><span class="badge-type">decimal(10,2)</span></td><td>Stok saat ini</td></tr>
+                                <tr><td>stok_minimum</td><td><span class="badge-type">decimal(10,2)</span></td><td>Ambang batas minimal</td></tr>
+                                <tr><td>harga_per_satuan</td><td><span class="badge-type">decimal(12,2)</span></td><td>Harga per satuan</td></tr>
+                                <tr><td>keterangan</td><td><span class="badge-type">text</span></td><td>Catatan (nullable)</td></tr>
+                                <tr><td>created_at</td><td><span class="badge-type">timestamp</span></td><td>-</td></tr>
+                                <tr><td>updated_at</td><td><span class="badge-type">timestamp</span></td><td>-</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- tbl_pengemasan -->
+                    <h6 class="fw-bold mt-4 mb-2">4. <code>tbl_pengemasan</code></h6>
+                    <div class="table-responsive">
+                        <table class="table-db">
+                            <thead>
+                                <tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>id_pengemasan</td><td><span class="badge-type">int(11)</span> <span class="badge-pk">PK</span></td><td>Auto Increment</td></tr>
+                                <tr><td>id_produk</td><td><span class="badge-type">int(11)</span> <span class="badge-fk">FK</span></td><td>Relasi ke tbl_produk</td></tr>
+                                <tr><td>id_produksi</td><td><span class="badge-type">int(11)</span> <span class="badge-fk">FK</span></td><td>Relasi ke tbl_produksi (nullable)</td></tr>
+                                <tr><td>id_kemasan</td><td><span class="badge-type">int(11)</span> <span class="badge-fk">FK</span></td><td>Relasi ke tbl_kemasan</td></tr>
+                                <tr><td>tgl_pengemasan</td><td><span class="badge-type">date</span></td><td>Tanggal pelaksanaan</td></tr>
+                                <tr><td>target_jumlah</td><td><span class="badge-type">int(11)</span></td><td>Target jumlah pengemasan</td></tr>
+                                <tr><td>hasil_pengemasan</td><td><span class="badge-type">int(11)</span></td><td>Hasil akhir (update dari progres)</td></tr>
+                                <tr><td>expired_date</td><td><span class="badge-type">date</span></td><td>Tanggal kadaluarsa produk</td></tr>
+                                <tr><td>id_pengguna</td><td><span class="badge-type">int(11)</span> <span class="badge-fk">FK</span></td><td>Pembuat/penanggung jawab</td></tr>
+                                <tr><td>id_operator_ditugaskan</td><td><span class="badge-type">int(11)</span> <span class="badge-fk">FK</span></td><td>Operator ditugaskan (nullable)</td></tr>
+                                <tr><td>status</td><td><span class="badge-type">varchar</span></td><td><code>direncanakan</code>, <code>proses</code>, <code>selesai</code>, <code>dibatalkan</code></td></tr>
+                                <tr><td>created_at</td><td><span class="badge-type">timestamp</span></td><td>-</td></tr>
+                                <tr><td>updated_at</td><td><span class="badge-type">timestamp</span></td><td>-</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- tbl_pengemasan_bahan -->
+                    <h6 class="fw-bold mt-4 mb-2">5. <code>tbl_pengemasan_bahan</code></h6>
+                    <div class="table-responsive">
+                        <table class="table-db">
+                            <thead>
+                                <tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>id_pengemasan_bahan</td><td><span class="badge-type">int(11)</span> <span class="badge-pk">PK</span></td><td>Auto Increment</td></tr>
+                                <tr><td>id_pengemasan</td><td><span class="badge-type">int(11)</span> <span class="badge-fk">FK</span></td><td>Relasi ke tbl_pengemasan</td></tr>
+                                <tr><td>id_bahan</td><td><span class="badge-type">int(11)</span> <span class="badge-fk">FK</span></td><td>Relasi ke tbl_bahan_baku</td></tr>
+                                <tr><td>jumlah_per_unit</td><td><span class="badge-type">decimal(10,2)</span></td><td>Kebutuhan bahan per unit</td></tr>
+                                <tr><td>total_terealisasi</td><td><span class="badge-type">decimal(10,2)</span></td><td>Total realisasi pemakaian</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- tbl_pengemasan_operator -->
+                    <h6 class="fw-bold mt-4 mb-2">5b. <code>tbl_pengemasan_operator</code> (many-to-many)</h6>
+                    <div class="table-responsive">
+                        <table class="table-db">
+                            <thead>
+                                <tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>id_pengemasan_operator</td><td><span class="badge-type">int(11)</span> <span class="badge-pk">PK</span></td><td>Auto Increment</td></tr>
+                                <tr><td>id_pengemasan</td><td><span class="badge-type">int(11)</span></td><td>Relasi ke tbl_pengemasan</td></tr>
+                                <tr><td>id_pengguna</td><td><span class="badge-type">int(11)</span></td><td>Relasi ke tbl_pengguna (operator)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- tbl_pengemasan_progres -->
+                    <h6 class="fw-bold mt-4 mb-2">6. <code>tbl_pengemasan_progres</code></h6>
+                    <div class="table-responsive">
+                        <table class="table-db">
+                            <thead>
+                                <tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>id_progres</td><td><span class="badge-type">int(11)</span> <span class="badge-pk">PK</span></td><td>Auto Increment</td></tr>
+                                <tr><td>id_pengemasan</td><td><span class="badge-type">int(11)</span> <span class="badge-fk">FK</span></td><td>Relasi ke tbl_pengemasan</td></tr>
+                                <tr><td>id_pengguna</td><td><span class="badge-type">int(11)</span> <span class="badge-fk">FK</span></td><td>Relasi ke tbl_pengguna</td></tr>
+                                <tr><td>jumlah_dikemas</td><td><span class="badge-type">int(11)</span></td><td>Jumlah yang diproses</td></tr>
+                                <tr><td>keterangan</td><td><span class="badge-type">text</span></td><td>Catatan progres (nullable)</td></tr>
+                                <tr><td>waktu_diproses</td><td><span class="badge-type">datetime</span></td><td>Waktu input progres (nullable)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- tbl_mutasi_bahan -->
+                    <h6 class="fw-bold mt-4 mb-2">7. <code>tbl_mutasi_bahan</code></h6>
+                    <div class="table-responsive">
+                        <table class="table-db">
+                            <thead>
+                                <tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>id_mutasi</td><td><span class="badge-type">int(11)</span> <span class="badge-pk">PK</span></td><td>Auto Increment</td></tr>
+                                <tr><td>id_bahan</td><td><span class="badge-type">int(11)</span> <span class="badge-fk">FK</span></td><td>Relasi ke tbl_bahan_baku</td></tr>
+                                <tr><td>jenis</td><td><span class="badge-type">varchar(30)</span></td><td><code>pemakaian</code>, <code>penambahan</code>, <code>bahan_baru</code>, <code>penyesuaian</code></td></tr>
+                                <tr><td>jumlah</td><td><span class="badge-type">decimal(10,2)</span></td><td>Jumlah perubahan</td></tr>
+                                <tr><td>stok_sebelum</td><td><span class="badge-type">decimal(10,2)</span></td><td>Stok sebelum perubahan</td></tr>
+                                <tr><td>stok_sesudah</td><td><span class="badge-type">decimal(10,2)</span></td><td>Stok sesudah perubahan</td></tr>
+                                <tr><td>harga_sebelum</td><td><span class="badge-type">decimal(12,2)</span></td><td>Harga satuan sebelum (nullable)</td></tr>
+                                <tr><td>harga_sesudah</td><td><span class="badge-type">decimal(12,2)</span></td><td>Harga satuan sesudah (nullable)</td></tr>
+                                <tr><td>keterangan</td><td><span class="badge-type">text</span></td><td>Catatan mutasi (nullable)</td></tr>
+                                <tr><td>id_pengguna</td><td><span class="badge-type">int(11)</span></td><td>Relasi ke tbl_pengguna (nullable)</td></tr>
+                                <tr><td>created_at</td><td><span class="badge-type">datetime</span></td><td>Waktu mutasi (manual)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- tbl_pengguna -->
+                    <h6 class="fw-bold mt-4 mb-2">8. <code>tbl_pengguna</code></h6>
+                    <div class="table-responsive">
+                        <table class="table-db">
+                            <thead>
+                                <tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>id_pengguna</td><td><span class="badge-type">int(11)</span> <span class="badge-pk">PK</span></td><td>Auto Increment</td></tr>
+                                <tr><td>username</td><td><span class="badge-type">varchar(50)</span></td><td>Username login (unique)</td></tr>
+                                <tr><td>password</td><td><span class="badge-type">varchar(255)</span></td><td>Hash bcrypt</td></tr>
+                                <tr><td>nama_lengkap</td><td><span class="badge-type">varchar(100)</span></td><td>Nama lengkap pengguna</td></tr>
+                                <tr><td>role</td><td><span class="badge-type">enum</span></td><td><code>admin</code>, <code>operator</code>, <code>pemilik</code></td></tr>
+                                <tr><td>created_at</td><td><span class="badge-type">datetime</span></td><td>(nullable)</td></tr>
+                                <tr><td>updated_at</td><td><span class="badge-type">datetime</span></td><td>(nullable)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== PENJABARAN TABEL ==================== -->
+            <div class="section-card" id="penjabaran">
+                <div class="card-header-custom">
+                    <i class="fas fa-book-open"></i> Penjabaran Tabel
+                </div>
+                <div class="card-body-custom">
+
+                    <h6 class="fw-bold">1. <code>tbl_produk</code></h6>
+                    <div class="table-desc">
+                        Menyimpan data master produk (barang jadi). Memiliki dua jenis stok:
+                        <strong><code>stok_tersedia</code></strong> (belum dikemas) dan
+                        <strong><code>stok_sudah_dikemas</code></strong> (sudah dikemas).
+                        Saat progres pengemasan dicatat, <code>stok_tersedia</code> akan berkurang
+                        dan <code>stok_sudah_dikemas</code> bertambah. Kolom <code>stok_minimum</code>
+                        digunakan untuk menandai produk kritis di dashboard.
+                    </div>
+
+                    <h6 class="fw-bold">2. <code>tbl_kemasan</code></h6>
+                    <div class="table-desc">
+                        Menyimpan data master kemasan dengan <strong><code>ukuran</code></strong>
+                        (misal: 500gr, 1kg). Relasi ke bahan baku dijembatani oleh
+                        <code>tbl_kemasan_bahan</code> yang berisi resep
+                        (<code>jumlah_per_unit</code>) untuk setiap jenis kemasan.
+                    </div>
+
+                    <h6 class="fw-bold">3. <code>tbl_bahan_baku</code></h6>
+                    <div class="table-desc">
+                        Menyimpan data bahan baku dengan stok (desimal) dan harga per satuan.
+                        Setiap perubahan stok dicatat di <code>tbl_mutasi_bahan</code>.
+                        Kolom <code>stok_minimum</code> digunakan untuk menandai bahan kritis.
+                    </div>
+
+                    <h6 class="fw-bold">4. <code>tbl_pengemasan</code></h6>
+                    <div class="table-desc">
+                        Entitas utama proses pengemasan. Mencatat produk, kemasan, target, hasil,
+                        tanggal kadaluarsa, penanggung jawab, dan status.
+                        Status: <strong><code>direncanakan</code></strong> (baru dibuat),
+                        <strong><code>proses</code></strong> (sedang berjalan),
+                        <strong><code>selesai</code></strong> (target tercapai),
+                        <strong><code>dibatalkan</code></strong> (stok bahan dikembalikan).
+                        Operator dapat ditugaskan melalui relasi many-to-many di
+                        <code>tbl_pengemasan_operator</code>.
+                    </div>
+
+                    <h6 class="fw-bold">5. <code>tbl_pengemasan_bahan</code> & <code>tbl_kemasan_bahan</code></h6>
+                    <div class="table-desc">
+                        Dua tabel berbeda untuk kebutuhan bahan:
+                        <strong><code>tbl_kemasan_bahan</code></strong> menyimpan resep standar
+                        (jumlah bahan per unit kemasan), sedangkan
+                        <strong><code>tbl_pengemasan_bahan</code></strong> mencatat realisasi
+                        pemakaian bahan untuk setiap batch pengemasan tertentu
+                        (dengan kolom <code>total_terealisasi</code>).
+                    </div>
+
+                    <h6 class="fw-bold">6. <code>tbl_pengemasan_progres</code></h6>
+                    <div class="table-desc">
+                        Mencatat input progres oleh operator. Setiap kali operator menambahkan
+                        progres, <code>jumlah_dikemas</code> diakumulasi ke
+                        <code>hasil_pengemasan</code> di tabel pengemasan. Tidak memiliki
+                        timestamps otomatis — menggunakan <code>waktu_diproses</code> manual.
+                    </div>
+
+                    <h6 class="fw-bold">7. <code>tbl_mutasi_bahan</code></h6>
+                    <div class="table-desc">
+                        Log/snapshot perubahan stok bahan baku. Menyimpan stok dan harga
+                        sebelum/sesudah. Jenis mutasi:
+                        <strong><code>pemakaian</code></strong> (saat pengemasan),
+                        <strong><code>penambahan</code></strong> (tambah stok manual),
+                        <strong><code>bahan_baru</code></strong> (saat create bahan),
+                        <strong><code>penyesuaian</code></strong> (koreksi stok).
+                        Kolom <code>created_at</code> diisi manual (tanpa timestamps otomatis).
+                    </div>
+
+                    <h6 class="fw-bold">8. <code>tbl_pengguna</code></h6>
+                    <div class="table-desc">
+                        Tabel user internal sistem. Login menggunakan username + password (bcrypt).
+                        Role menentukan akses menu: <code>admin</code> (semua akses),
+                        <code>operator</code> (progres & lihat), <code>pemilik</code> (master & laporan).
+                        Mengimplementasikan <code>Authenticatable</code> Laravel.
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== ARSITEKTUR ==================== -->
+            <div class="section-card" id="arsitektur">
+                <div class="card-header-custom">
+                    <i class="fas fa-folder-tree"></i> Arsitektur Aplikasi
+                </div>
+                <div class="card-body-custom">
+
+                    <h6 class="fw-bold mb-2">Struktur Direktori</h6>
+                    <div class="tree">
+                        <span class="highlight">app/</span><br>
+                        ├── <span class="highlight">Http/</span><br>
+                        │&nbsp;&nbsp;├── <span class="highlight2">Controllers/</span><br>
+                        │&nbsp;&nbsp;│&nbsp;&nbsp;├── Auth/LoginController.php<br>
+                        │&nbsp;&nbsp;│&nbsp;&nbsp;├── DashboardController.php<br>
+                        │&nbsp;&nbsp;│&nbsp;&nbsp;├── BahanBakuController.php<br>
+                        │&nbsp;&nbsp;│&nbsp;&nbsp;├── KemasanController.php<br>
+                        │&nbsp;&nbsp;│&nbsp;&nbsp;├── PengemasanController.php<br>
+                        │&nbsp;&nbsp;│&nbsp;&nbsp;├── ProdukController.php<br>
+                        │&nbsp;&nbsp;│&nbsp;&nbsp;├── KelolaPenggunaController.php<br>
+                        │&nbsp;&nbsp;│&nbsp;&nbsp;├── StokProdukController.php<br>
+                        │&nbsp;&nbsp;│&nbsp;&nbsp;├── LaporanController.php<br>
+                        │&nbsp;&nbsp;│&nbsp;&nbsp;└── HistoryController.php<br>
+                        │&nbsp;&nbsp;├── <span class="highlight3">Middleware/</span><br>
+                        │&nbsp;&nbsp;│&nbsp;&nbsp;└── CheckRole.php<br>
+                        │&nbsp;&nbsp;└── Kernel.php<br>
+                        ├── <span class="highlight">Models/</span><br>
+                        │&nbsp;&nbsp;├── Pengguna.php<br>
+                        │&nbsp;&nbsp;├── Produk.php<br>
+                        │&nbsp;&nbsp;├── Kemasan.php<br>
+                        │&nbsp;&nbsp;├── BahanBaku.php<br>
+                        │&nbsp;&nbsp;├── Pengemasan.php<br>
+                        │&nbsp;&nbsp;├── PengemasanBahan.php<br>
+                        │&nbsp;&nbsp;├── ProgresPengemasan.php<br>
+                        │&nbsp;&nbsp;└── MutasiBahan.php<br>
+                        <span class="highlight">database/</span><br>
+                        └── migrations/ (8 file)<br>
+                        <span class="highlight">routes/</span><br>
+                        └── web.php<br>
+                        <span class="highlight">resources/views/</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;├── layouts/ (app, sidebar)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;├── auth/ (login)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;├── dashboard/<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;├── produk/<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;├── bahan-baku/<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;├── kemasan/<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;├── pengemasan/<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;├── stok/<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;├── history/<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;├── laporan/<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;└── pengguna/
+                    </div>
+
+                    <h6 class="fw-bold mt-4 mb-2">Routing</h6>
+                    <p style="color:#555;line-height:1.7">
+                        Semua route didefinisikan di <code>routes/web.php</code>:
+                    </p>
+                    <ul style="line-height:2;color:#555;">
+                        <li><strong>Guest:</strong> Login</li>
+                        <li><strong>Middleware <code>auth</code>:</strong> Dashboard, Pengemasan (view & progres), Stok, Riwayat, AJAX</li>
+                        <li><strong>Middleware <code>auth</code> + <code>role:admin</code>:</strong> CRUD Pengemasan (create, edit, delete, batalkan)</li>
+                        <li><strong>Middleware <code>auth</code> + <code>role:admin,pemilik</code>:</strong> Master (produk, bahan, kemasan, pengguna) & Laporan</li>
+                    </ul>
+
+                    <h6 class="fw-bold mt-3 mb-2">Autentikasi</h6>
+                    <p style="color:#555;line-height:1.7">
+                        Login manual via <code>LoginController</code> &mdash; tanpa Laravel Breeze/Jetstream.
+                        Session-based, password di-hash bcrypt. Model <code>Pengguna</code>
+                        mengimplementasikan <code>Authenticatable</code>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- ==================== INSTALASI ==================== -->
+            <div class="section-card" id="instalasi">
+                <div class="card-header-custom">
+                    <i class="fas fa-download"></i> Cara Instalasi
+                </div>
+                <div class="card-body-custom">
+
+                    <div class="alert-requirements">
+                        <strong><i class="fas fa-exclamation-triangle me-1"></i> Peringatan</strong>
+                        <p style="margin:6px 0 0;font-size:14px">
+                            Pastikan environment Anda sudah menggunakan versi terbaru sebelum menjalankan proyek ini:
+                        </p>
+                        <ul>
+                            <li>PHP <strong>&gt;= 8.3</strong> (direkomendasikan PHP 8.3.x terbaru)</li>
+                            <li>Composer <strong>&gt;= 2.7</strong></li>
+                            <li>Node.js <strong>&gt;= 20</strong> &amp; NPM <strong>&gt;= 10</strong></li>
+                            <li>Database MySQL <strong>&gt;= 8.0</strong> atau MariaDB <strong>&gt;= 10.6</strong></li>
+                            <li>
+                                Ekstensi PHP: <code>BCMath</code>, <code>Ctype</code>, <code>Fileinfo</code>,
+                                <code>JSON</code>, <code>Mbstring</code>, <code>OpenSSL</code>, <code>PDO</code>,
+                                <code>Tokenizer</code>, <code>XML</code>, <code>cURL</code>, <code>GD</code>
+                            </li>
+                        </ul>
+                        <p style="margin:6px 0 0;font-size:13px;color:#856404;">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Jika versi Anda di bawah ketentuan di atas, kemungkinan akan muncul error saat instalasi.
+                        </p>
+                    </div>
+
+                    <div class="code-block mt-3">
+                        <span class="comment"># 1. Clone repositori</span><br>
+                        <span class="cmd">git clone</span> &lt;repo-url&gt; kemasan-umkm<br>
+                        <span class="cmd">cd</span> kemasan-umkm<br>
+                        <br>
+                        <span class="comment"># 2. Install dependencies</span><br>
+                        <span class="cmd">composer install</span><br>
+                        <span class="cmd">npm install && npm run build</span><br>
+                        <br>
+                        <span class="comment"># 3. Konfigurasi environment</span><br>
+                        <span class="cmd">cp</span> .env.example .env<br>
+                        <span class="comment"># Edit .env: DB_DATABASE, DB_USERNAME, DB_PASSWORD</span><br>
+                        <br>
+                        <span class="comment"># 4. Generate key</span><br>
+                        <span class="cmd">php artisan key:generate</span><br>
+                        <br>
+                        <span class="comment"># 5. Migrasi & seed</span><br>
+                        <span class="cmd">php artisan migrate --seed</span><br>
+                        <br>
+                        <span class="comment"># 6. Jalankan</span><br>
+                        <span class="cmd">php artisan serve</span>
+                    </div>
+
+                    <h6 class="fw-bold mt-4 mb-2">Default User Seeder</h6>
+                    <div class="table-responsive">
+                        <table class="seeder-table">
+                            <thead>
+                                <tr><th>Username</th><th>Password</th><th>Role</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>admin</td><td>admin123</td><td><span class="role-badge admin">admin</span></td></tr>
+                                <tr><td>operator</td><td>operator123</td><td><span class="role-badge operator">operator</span></td></tr>
+                                <tr><td>pemilik</td><td>pemilik123</td><td><span class="role-badge pemilik">pemilik</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== FOOTER ==================== -->
+            <div class="text-center py-4" style="color:#888;font-size:13px;border-top:1px solid #eee;">
+                <i class="fas fa-copyright me-1"></i> Hak cipta 2026 &mdash; Digunakan untuk keperluan tugas mata kuliah Analisis Proses Bisnis / RPL
+            </div>
+
+        </div>
+        <!-- /content-area -->
+    </div>
+    <!-- /main-wrapper -->
+
+    <script>
+        mermaid.initialize({
+            theme: 'default',
+            securityLevel: 'loose',
+            maxEdges: 200,
+            fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
+            themeVariables: {
+                primaryColor: '#0d6efd',
+                primaryTextColor: '#212529',
+                primaryBorderColor: '#0a58ca',
+                lineColor: '#6c757d',
+                secondaryColor: '#f8f9fa',
+                tertiaryColor: '#e9ecef',
+                clusterBkg: '#f8f9fa',
+                clusterBorder: '#dee2e6'
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+        });
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+        }
+
+        document.querySelectorAll('.sidebar .nav-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                if (window.innerWidth < 992) {
+                    sidebar.classList.remove('open');
+                    overlay.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
