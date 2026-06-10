@@ -14,6 +14,9 @@ use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\HistoryController;
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
     return redirect()->route('login');
 });
 

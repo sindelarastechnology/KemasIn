@@ -187,13 +187,13 @@ class PengemasanController extends Controller
             'keterangan' => 'nullable|string|max:500',
         ]);
 
+        $user = auth()->user();
+
         $pengemasan = Pengemasan::with(['pengemasanBahan.bahanBaku', 'operatorDitugaskan'])->findOrFail($id);
 
         if ($pengemasan->status === 'selesai' || $pengemasan->status === 'dibatalkan') {
             return redirect()->back()->with('error', 'Pengemasan sudah selesai/dibatalkan.');
         }
-
-        $user = auth()->user();
 
         if ($user->role !== 'admin' && $pengemasan->operatorDitugaskan->isNotEmpty()) {
             $assignedIds = $pengemasan->operatorDitugaskan->pluck('id_pengguna')->toArray();
@@ -211,8 +211,20 @@ class PengemasanController extends Controller
 
         DB::beginTransaction();
         try {
+            $pengemasan = Pengemasan::with(['pengemasanBahan.bahanBaku'])
+                ->lockForUpdate()
+                ->findOrFail($id);
+
+            $sudahDikemas = (int) $pengemasan->progresPengemasan()->lockForUpdate()->sum('jumlah_dikemas');
+            $sisaTarget = $pengemasan->target_jumlah - $sudahDikemas;
+
+            if ($request->jumlah_dikemas > $sisaTarget) {
+                DB::rollBack();
+                return redirect()->back()->with('error', "Jumlah melebihi sisa target ($sisaTarget).");
+            }
+
             foreach ($pengemasan->pengemasanBahan as $detail) {
-                $bahan = BahanBaku::where('id_bahan', $detail->id_bahan)->lockForUpdate()->first();
+                $bahan = BahanBaku::lockForUpdate()->find($detail->id_bahan);
                 $pengurangan = $detail->jumlah_per_unit * $request->jumlah_dikemas;
 
                 if ($bahan->stok_tersedia < $pengurangan) {
@@ -236,8 +248,9 @@ class PengemasanController extends Controller
 
                 $detail->increment('total_terealisasi', $pengurangan);
 
-                $bahan = BahanBaku::where('id_bahan', $detail->id_bahan)->first();
+                $bahan = BahanBaku::lockForUpdate()->find($detail->id_bahan);
                 $stokSebelum = $bahan->stok_tersedia;
+                $stokSesudah = $stokSebelum - $pengurangan;
                 $bahan->decrement('stok_tersedia', $pengurangan);
 
                 MutasiBahan::create([
@@ -245,7 +258,7 @@ class PengemasanController extends Controller
                     'jenis' => 'pemakaian',
                     'jumlah' => -$pengurangan,
                     'stok_sebelum' => $stokSebelum,
-                    'stok_sesudah' => $bahan->fresh()->stok_tersedia,
+                    'stok_sesudah' => $stokSesudah,
                     'harga_sebelum' => $bahan->harga_per_satuan,
                     'harga_sesudah' => $bahan->harga_per_satuan,
                     'keterangan' => 'Pemakaian untuk pengemasan #' . $pengemasan->id_pengemasan,
@@ -255,7 +268,7 @@ class PengemasanController extends Controller
             }
 
             if ($pengemasan->id_produk) {
-                $produk = Produk::where('id_produk', $pengemasan->id_produk)->lockForUpdate()->first();
+                $produk = Produk::lockForUpdate()->find($pengemasan->id_produk);
 
                 if ($produk->stok_tersedia < $request->jumlah_dikemas) {
                     DB::rollBack();
@@ -266,8 +279,8 @@ class PengemasanController extends Controller
                 $produk->increment('stok_sudah_dikemas', $request->jumlah_dikemas);
             }
 
-            $totalBaru = $pengemasan->fresh()->hasil_pengemasan;
-            if ($totalBaru >= $pengemasan->target_jumlah) {
+            $hasilBaru = $pengemasan->hasil_pengemasan + $request->jumlah_dikemas;
+            if ($hasilBaru >= $pengemasan->target_jumlah) {
                 $pengemasan->update(['status' => 'selesai']);
             } else {
                 $pengemasan->update(['status' => 'proses']);
@@ -286,30 +299,46 @@ class PengemasanController extends Controller
 
     public function batalkan($id)
     {
-        $pengemasan = Pengemasan::with('pengemasanBahan')->findOrFail($id);
-
-        if ($pengemasan->status === 'selesai' || $pengemasan->status === 'dibatalkan') {
-            return redirect()->back()->with('error', 'Pengemasan sudah selesai/dibatalkan.');
-        }
+        $user = auth()->user();
 
         DB::beginTransaction();
         try {
-            $totalDikemas = (int) $pengemasan->progresPengemasan()->sum('jumlah_dikemas');
+            $pengemasan = Pengemasan::with('pengemasanBahan.bahanBaku')
+                ->lockForUpdate()
+                ->findOrFail($id);
+
+            if ($pengemasan->status === 'selesai' || $pengemasan->status === 'dibatalkan') {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'Pengemasan sudah selesai/dibatalkan.');
+            }
+
+            $totalDikemas = (int) $pengemasan->progresPengemasan()->lockForUpdate()->sum('jumlah_dikemas');
 
             if ($totalDikemas > 0) {
                 foreach ($pengemasan->pengemasanBahan as $detail) {
                     if ($detail->total_terealisasi > 0) {
-                        BahanBaku::where('id_bahan', $detail->id_bahan)
-                            ->lockForUpdate()
-                            ->increment('stok_tersedia', $detail->total_terealisasi);
+                        $bahan = BahanBaku::lockForUpdate()->find($detail->id_bahan);
+                        $stokSebelum = $bahan->stok_tersedia;
+                        $stokSesudah = $stokSebelum + $detail->total_terealisasi;
+                        $bahan->increment('stok_tersedia', $detail->total_terealisasi);
+
+                        MutasiBahan::create([
+                            'id_bahan' => $detail->id_bahan,
+                            'jenis' => 'pengembalian',
+                            'jumlah' => $detail->total_terealisasi,
+                            'stok_sebelum' => $stokSebelum,
+                            'stok_sesudah' => $stokSesudah,
+                            'harga_sebelum' => $bahan->harga_per_satuan,
+                            'harga_sesudah' => $bahan->harga_per_satuan,
+                            'keterangan' => 'Pengembalian dari pembatalan pengemasan #' . $pengemasan->id_pengemasan,
+                            'id_pengguna' => $user->id_pengguna,
+                            'created_at' => Carbon::now(),
+                        ]);
                     }
                 }
 
-                if ($pengemasan->id_produk && $totalDikemas > 0) {
-                    $produk = Produk::where('id_produk', $pengemasan->id_produk)
-                        ->lockForUpdate()
-                        ->first();
-
+                if ($pengemasan->id_produk) {
+                    $produk = Produk::lockForUpdate()->find($pengemasan->id_produk);
                     $produk->decrement('stok_sudah_dikemas', $totalDikemas);
                     $produk->increment('stok_tersedia', $totalDikemas);
                 }

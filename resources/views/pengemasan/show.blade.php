@@ -12,7 +12,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
             <h4 class="fw-bold mb-0">Detail Pengemasan</h4>
             <small class="text-muted">{{ $pengemasan->produk->nama_produk ?? 'Produk' }} &middot; {{ $pengemasan->kemasan->nama_kemasan ?? '-' }}</small>
@@ -135,12 +135,34 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <span><i class="fas fa-history me-1 text-primary"></i> Riwayat Progress</span>
             @if($pengemasan->status != 'selesai' && $pengemasan->status != 'dibatalkan' && auth()->user()->role != 'pemilik')
-                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahProgres">
-                    <i class="fas fa-plus"></i> Tambah Progress
-                </button>
+                <span class="badge bg-light text-dark">Sisa target: {{ number_format(max(0, $pengemasan->target_jumlah - $pengemasan->hasil_pengemasan), 0, ',', '.') }} unit</span>
             @endif
         </div>
-        <div class="card-body p-0">
+        <div class="card-body">
+            @if($pengemasan->status != 'selesai' && $pengemasan->status != 'dibatalkan' && auth()->user()->role != 'pemilik')
+            <form action="{{ route('pengemasan.tambahProgres', $pengemasan->id_pengemasan) }}" method="POST" id="formTambahProgres" class="border p-3 rounded bg-light mb-3">
+                @csrf
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Jumlah Dikemas <span class="text-danger">*</span></label>
+                        <input type="number" name="jumlah_dikemas" class="form-control form-control-lg" required min="1" max="{{ max(0, $pengemasan->target_jumlah - $pengemasan->hasil_pengemasan) }}" placeholder="Masukkan jumlah">
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label">Keterangan <small class="text-muted">(opsional)</small></label>
+                        <textarea name="keterangan" class="form-control" rows="2" placeholder="Catatan tambahan..."></textarea>
+                    </div>
+                    <div class="col-md-3 d-flex flex-column justify-content-end">
+                        <button type="submit" class="btn btn-primary btn-lg w-100 btn-submit-loading">
+                            <i class="fas fa-save me-1"></i> Simpan Progress
+                        </button>
+                    </div>
+                </div>
+                <div class="alert alert-info d-flex align-items-center gap-2 mt-3 mb-0 py-2">
+                    <i class="fas fa-info-circle"></i>
+                    <small>Bahan baku akan dikurangi dan stok produk akan bertambah sesuai jumlah yang dikemas.</small>
+                </div>
+            </form>
+            @endif
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead>
@@ -172,41 +194,4 @@
         </div>
     </div>
 </div>
-
-@if($pengemasan->status != 'selesai' && $pengemasan->status != 'dibatalkan' && auth()->user()->role != 'pemilik')
-<div class="modal fade" id="modalTambahProgres" tabindex="-1">
-    <div class="modal-dialog">
-        <form action="{{ route('pengemasan.tambahProgres', $pengemasan->id_pengemasan) }}" method="POST" id="formTambahProgres">
-            @csrf
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold">Tambah Progress Pengemasan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Jumlah Dikemas (unit)</label>
-                        <input type="number" name="jumlah_dikemas" class="form-control form-control-lg" required min="1" max="{{ max(0, $pengemasan->target_jumlah - $pengemasan->hasil_pengemasan) }}" placeholder="Masukkan jumlah">
-                        <small class="text-muted">Sisa target: <strong>{{ number_format(max(0, $pengemasan->target_jumlah - $pengemasan->hasil_pengemasan), 0, ',', '.') }}</strong> unit</small>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Keterangan <small class="text-muted">(opsional)</small></label>
-                        <textarea name="keterangan" class="form-control" rows="2" placeholder="Catatan tambahan..."></textarea>
-                    </div>
-                    <div class="alert alert-info d-flex align-items-center gap-2 mb-0">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Bahan baku akan dikurangi dan stok produk akan bertambah sesuai jumlah yang dikemas.</span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary btn-submit-loading">
-                        <i class="fas fa-save me-1"></i> Simpan Progress
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-@endif
 @endsection
