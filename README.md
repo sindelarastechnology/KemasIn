@@ -281,7 +281,8 @@ Login manual via `LoginController` — tanpa Laravel Breeze/Jetstream. Session-b
 > - Ekstensi PHP: `BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML, cURL, GD`
 >
 > Jika versi Anda di bawah ketentuan di atas, kemungkinan akan muncul error saat instalasi.
-> Pastikan semua persyaratan terpenuhi, jika belum ikuti tutorial disini(https://github.com/sindelarastechnology/Laragon-6.0.0-Untuk-Laravel-13)
+> Pastikan semua persyaratan terpenuhi, jika belum ikuti tutorial disini :
+👉 [**Tutorial**](https://github.com/sindelarastechnology/Laragon-6.0.0-Untuk-Laravel-13)
 
 ```bash
 # 1. Clone repositori
