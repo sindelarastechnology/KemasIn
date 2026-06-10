@@ -271,41 +271,6 @@ Login manual via `LoginController` — tanpa Laravel Breeze/Jetstream. Session-b
 
 ---
 
-## Cara Instalasi
-
-> **Peringatan:** Pastikan environment Anda sudah menggunakan versi terbaru sebelum menjalankan proyek ini:
-> - PHP `>= 8.3` (direkomendasikan PHP 8.3.x terbaru)
-> - Composer `>= 2.7`
-> - Node.js `>= 20` & NPM `>= 10`
-> - Database MySQL `>= 8.0` atau MariaDB `>= 10.6`
-> - Ekstensi PHP: `BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML, cURL, GD`
->
-> Jika versi Anda di bawah ketentuan di atas, kemungkinan akan muncul error saat instalasi.
-> Pastikan semua persyaratan terpenuhi, jika belum ikuti tutorial disini :
-👉 [**Tutorial**](https://github.com/sindelarastechnology/Laragon-6.0.0-Untuk-Laravel-13)
-
-```bash
-# 1. Clone repositori
-git clone https://github.com/sindelarastechnology/KemasIn
-cd KemasIn
-
-# 2. Install dependencies
-composer install
-npm install && npm run build
-
-# 3. Konfigurasi environment
-cp .env.example .env
-# Edit .env: DB_DATABASE, DB_USERNAME, DB_PASSWORD
-
-# 4. Generate key
-php artisan key:generate
-
-# 5. Migrasi & seed
-php artisan migrate --seed
-
-# 6. Jalankan
-php artisan serve
-```
 
 Default user seeder:
 | Username  | Password    | Role    |
@@ -714,6 +679,43 @@ Tabel user internal sistem. Login menggunakan username + password (bcrypt). Role
 
 ---
 
+## Cara Instalasi
+
+> **Peringatan:** Pastikan environment Anda sudah menggunakan versi terbaru sebelum menjalankan proyek ini:
+> - PHP `>= 8.3` (direkomendasikan PHP 8.3.x terbaru)
+> - Composer `>= 2.7`
+> - Node.js `>= 20` & NPM `>= 10`
+> - Database MySQL `>= 8.0` atau MariaDB `>= 10.6`
+> - Ekstensi PHP: `BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML, cURL, GD`
+>
+> Jika versi Anda di bawah ketentuan di atas, kemungkinan akan muncul error saat instalasi.
+> Pastikan semua persyaratan terpenuhi, jika belum ikuti tutorial disini :
+👉 [**Tutorial**](https://github.com/sindelarastechnology/Laragon-6.0.0-Untuk-Laravel-13)
+
+```bash
+# 1. Clone repositori
+git clone https://github.com/sindelarastechnology/KemasIn
+cd KemasIn
+
+# 2. Install dependencies
+composer install
+npm install && npm run build
+
+# 3. Konfigurasi environment
+cp .env.example .env
+# Edit .env: DB_DATABASE, DB_USERNAME, DB_PASSWORD
+
+# 4. Generate key
+php artisan key:generate
+
+# 5. Migrasi & seed
+php artisan migrate --seed
+
+# 6. Jalankan
+php artisan serve
+```
+---
+
 ## Lisensi
 
-Hak cipta © 2026. Digunakan untuk keperluan tugas mata kuliah Analisis Proses Bisnis / RPL.
+Hak cipta ©[**Sindelaras Technology**](https://sindelarastechnology.my.id/) 2026. Digunakan untuk keperluan tugas mata kuliah Analisis Proses Bisnis / RPL.
